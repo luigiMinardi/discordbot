@@ -1,10 +1,13 @@
+const {enviaMensagem, descricaoEmbed} = require('../function');
 module.exports = {
     name: 'ping',
-    description: 'Shows your ping!',
+    description: 'Mostra seu ping!',
+    aliases: ['ms'],
+    category: 'utilidade',
+    cooldown: 5,
     async execute(message, args){
-        //esse usa a função enviaMensagem e descricaoEmbed e não funciona
-        const m = await enviaMensagem(descricaoEmbed("Ping?"));
-        m.edit(descricaoEmbed(`Pong! A latência é ${m.createdTimestamp - message.createdTimestamp}ms.
-A latencia da API é ${Math.round(client.ws.ping)}ms.`));
+        const m = await enviaMensagem(message,descricaoEmbed(message,"Ping?"));
+        m.edit(descricaoEmbed(message,`:ping_pong: Pong! A latência é ${m.createdTimestamp - message.createdTimestamp}ms.
+A latencia da API é ${Math.round(message.client.ws.ping)}ms.`));
     }
 };
