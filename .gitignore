@@ -1,0 +1,6 @@
+#MAC config file
+.DS_Store
+#node modules
+node_modules/
+#sensitive files
+config.json
