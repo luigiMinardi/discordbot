@@ -22,12 +22,12 @@ for (const file of commandFiles){
 
 const cooldowns = new Discord.Collection();
 
-const {enviaMensagem, descricaoEmbed, checaPermissao} = require('./function');
+const {enviaMensagem, descricaoEmbed, checaPermissao, permArgs} = require('./function');
 //quando o bot for ligado
 client.once("ready", () =>{
     console.log(`${client.user.username} foi iniciado, com ${client.users.cache.size} usuarios, em ${client.guilds.cache.size} servidores!`);
     console.log(`Logged in as ${client.user.tag}!`);
-    client.user.setActivity(`Upando os comandos!`, {type: 'PLAYING'});
+    client.user.setActivity(`+help | Upando os comandos!`, {type: 'PLAYING'});
 });
 //quando o bot entra numa guild (servidor do discord)
 client.on("guildCreate", guild => {
@@ -63,11 +63,18 @@ client.on('message', message => {
     if(!command) return;
 
     //*em construção://
+    //message.member.permissions.has('')
+
     const permissao = command.permission;
     exports.permissao = permissao;
     //teste acima*/
 
+    if(command.Perm_Args){
+    if(permArgs(message, command, args) == false) return;
+    }
+    if (command.permission && !command.Perm_Args){
     if (checaPermissao(message, command) == false) return;
+    }
 
     if (command.guildOnly && message.channel.type !== 'text') {
         return message.reply("Eu não posso executar esse comando no DM!");
@@ -93,10 +100,10 @@ client.on('message', message => {
     setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
 
     if (command.args && !args.length) {
-        let reply = `Você não passou nenhum argumento!`;
+        let reply = `_**Você não passou nenhum argumento!**_`;
 
         if(command.usage){
-            reply += `\n A forma correta seria: \n \`${prefix}${command.name} ${command.usage}\``;
+            reply += `\n **A forma correta seria:**\n\`\`${prefix}${command.name} ${command.usage}\`\``;
         }
         enviaMensagem(message, `Ei, ${message.author}!`);
         return enviaMensagem(message,descricaoEmbed(message, reply));
@@ -224,28 +231,7 @@ client.on('message', message => {
           enviaMensagemEmbed(arrayNomes);
     }
     //fim skiddie
-    if (comando === "embedsr"){
-        corEmbed(message.mentions.roles.first().color);
-        enviaMensagem(descricaoEmbed(`${args.slice().toString().trim().replace(/,/g," ")}`));
-    }
-    if (comando === "embedc"){
-        const hex = /[0-9A-Fa-f]{6}/g;
-        if(!hex.test(args[0])){
-            corEmbed("#FFFF62");
-            enviaMensagem(descricaoEmbed(`Coloque uma **cor hexadecimal** valida:
-            
-            Tente [pegar um hexadecimal aqui](https://htmlcolorcodes.com/).
-
-            Ou [converta um RGB/RGBA pra Hexadecimal aqui](https://cssgenerator.org/rgba-and-hex-color-generator.html).
-            
-            Não sabe o que é uma cor hexadecimal?
-            [confira o que é uma cor hexadecimal aqui](https://medium.com/origamid/cores-em-hexadecimal-memor%C3%A1veis-cc939511753c).
-            `));
-        } else {
-            corEmbed(args[0]);
-            enviaMensagem(descricaoEmbed(`${args.slice(1).toString().trim().replace(/,/g," ")}`));
-        }
-    }
+    
     if (comando === "setrole"){
         message.delete()
         if(!args.length){
@@ -438,18 +424,6 @@ enviaMensagem(descricaoEmbed(`O usuario ${usuario} nem tem o cargo ${message.gui
         
         update(id,cor,titulo,descricao, imagem, thumb);
     }
-    if (comando === "jump"){
-        //https://discordapp.com/channels/XXXXXX/XXXXXX/XXXXXX
-        enviaMensagem(descricaoEmbed(`[${args.slice(2).toString().trim().replace(/,/g," ")}](https://discordapp.com/channels/${message.guild.id}/${args[0]}/${args[1]})`));
-        /*console.log("guild id: "+message.guild.id);
-        console.log("channel id: "+message.channel.id);
-        console.log("id da msg: "+message.id);
-        console.log("id author:"+ message.author.id);*/
-    }
-    if (comando === "jumpsv"){
-        enviaMensagem(descricaoEmbed(`[${args.slice(3).toString().trim().replace(/,/g," ")}](https://discordapp.com/channels/${args[0]}/${args[1]}/${args[2]})`));
-    }
-
     if (comando === "y"){
         enviaMensagem(descricaoEmbed("Comando off pra corrigir safe search, tempo indefinido pra voltar"));
         //enviaMensagem(descricaoEmbed(`https://youtube.com/search?q=${args.slice().toString().trim().replace(/,/g,"+")}`))

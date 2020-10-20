@@ -1,4 +1,4 @@
-const {tituloEmbed, enviaMensagem, descricaoEmbed, embedCustom} = require('../function');
+const {tituloEmbed, enviaMensagem, descricaoEmbed} = require('../function');
 const {prefix} = require('../config.json');
 const Discord = require('discord.js');
 const embed = new Discord.MessageEmbed();

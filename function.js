@@ -1,8 +1,71 @@
 //funcoes
 const Discord = require("discord.js");
 
+const checaOwner = (message, command) =>{
+  const owners = ["310610499953885184", "651116011021402113"];
+  //const owners = ["310610499953885184"];
+
+  for (let i = 0; i < owners.length; i++) {
+    if(message.author.id === owners[i]){
+      /*
+      if(command.category === "bot-owner"){
+        message.author.send(`Olá mestre ${message.author.username}!`);
+        if(message.channel.type !== 'dm'){
+          message.author.send(embed(message).setDescription(`**[Voltar para o servidor de origem](${message.url})**`));
+        }
+      }
+      //*/
+    return true;
+    }
+  }
+}
+
+const permArgs = (message, command, args) => {
+  var permissao = [];
+  permissao.push(command.permission);
+  /*
+  console.log(`tem ${command.permission[0]}: `+message.member.permissions.has(command.permission[0]));
+  console.log(`tem ${command.permission[1]}: `+message.member.permissions.has(command.permission[1]));
+  console.log("permArgs: "+command.Perm_Args);
+  console.log("permission length: "+command.permission.length);
+  console.log("Args: "+ args);
+  console.log("Args some: "+args.some(arg => arg == command.Perm_Args));
+  //*/
+  if (checaOwner(message, command) == true) return true;
+  if (message.member.hasPermission('ADMINISTRATOR')) return true;
+  if (args.some(arg => arg == command.Perm_Args) == true){
+    var checkAllPermission = [];
+
+    for (let i = 0; i < command.permission.length; i++) {
+      //console.log(`tem ${command.permission[i]}: `+message.member.permissions.has(command.permission[i]));
+
+      if (message.member.permissions.has(command.permission[i])){
+        
+          checkAllPermission.push(true);
+          if(permissao[0] != undefined) return true;
+      }else checkAllPermission.push(false);
+    }
+    //console.log("checkAllPermission: "+checkAllPermission);
+
+    if(!checkAllPermission.some(perm => perm == true)) {
+      if (command.category !== 'bot-owner'){
+
+        return (
+          message.reply(descricaoEmbed(message, `Você precisa ser ADM ou ter uma das permissões do comando.
+          Permissões necessárias para usar o comando:
+          \`\`${permissao[0] == undefined ? 'ADMINISTRATOR' : command.permission.toString().replace(/,/g,", ")}\`\`.`)),
+          false
+        );
+      }
+    }
+  }
+  if (!args.length || args != command.Perm_Args) return true;
+
+}
+exports.permArgs = permArgs;
+
 const checaPermissao = (message, command) => {
-  if(command.category == "moderação"){
+  if(command.category === "moderação"){
     var permissao = [];
     permissao.push(command.permission);
     if (message.member.hasPermission('ADMINISTRATOR')) return true;
@@ -16,18 +79,11 @@ const checaPermissao = (message, command) => {
       );
     }
   }
-  if(command.category == "bot-owner"){
-    const owners = ["310610499953885184", "651116011021402113"];
-    for (let i = 0; i < owners.length; i++) {
-      if(message.member.id === owners[i]){
-        return (
-          enviaMensagem(message, `Olá mestre ${message.author.username}!`),
-          true);
-      }
-    }
-      return (
-        message.reply(descricaoEmbed(message, "Esse comando só pode ser usado pelo dono do bot.")),
-        false); 
+  if(command.category === "bot-owner"){
+    if (checaOwner(message, command) == true) return true;
+    return (
+      message.reply(descricaoEmbed(message, "Esse comando só pode ser usado pelo dono do bot.")),
+      false); 
   }
 }
 exports.checaPermissao = checaPermissao;
@@ -63,12 +119,6 @@ const descricaoEmbed = (message,descricao) =>{
     return embed(message).setDescription(descricao);
 }
 exports.descricaoEmbed = descricaoEmbed;
-
-const corEmbed = (message, cor) =>{
-    return embed(message).setColor(cor);
-}
-exports.corEmbed = corEmbed;
-
 const tituloEmbed =(message,titulo) =>{
     return embed(message).setTitle(titulo);
 }
