@@ -64,9 +64,7 @@ client.on('message', message => {
 
     //*em construção://
     //message.member.permissions.has('')
-
-    const permissao = command.permission;
-    exports.permissao = permissao;
+    
     //teste acima*/
 
     if(command.Perm_Args){

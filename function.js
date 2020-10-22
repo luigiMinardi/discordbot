@@ -21,45 +21,54 @@ const checaOwner = (message, command) =>{
 }
 
 const permArgs = (message, command, args) => {
-  var permissao = [];
+  let permissao = [];
+  let argumentosDeComandoQueUsamPermissao = command.Perm_Args;
   permissao.push(command.permission);
   /*
   console.log(`tem ${command.permission[0]}: `+message.member.permissions.has(command.permission[0]));
   console.log(`tem ${command.permission[1]}: `+message.member.permissions.has(command.permission[1]));
-  console.log("permArgs: "+command.Perm_Args);
+  console.log("Perm_Args: ");
+  console.log(command.Perm_Args);
+  console.log(argumentosDeComandoQueUsamPermissao);
   console.log("permission length: "+command.permission.length);
   console.log("Args: "+ args);
-  console.log("Args some: "+args.some(arg => arg == command.Perm_Args));
   //*/
   if (checaOwner(message, command) == true) return true;
   if (message.member.hasPermission('ADMINISTRATOR')) return true;
-  if (args.some(arg => arg == command.Perm_Args) == true){
-    var checkAllPermission = [];
-
-    for (let i = 0; i < command.permission.length; i++) {
-      //console.log(`tem ${command.permission[i]}: `+message.member.permissions.has(command.permission[i]));
-
-      if (message.member.permissions.has(command.permission[i])){
-        
-          checkAllPermission.push(true);
-          if(permissao[0] != undefined) return true;
-      }else checkAllPermission.push(false);
-    }
-    //console.log("checkAllPermission: "+checkAllPermission);
-
-    if(!checkAllPermission.some(perm => perm == true)) {
-      if (command.category !== 'bot-owner'){
-
-        return (
-          message.reply(descricaoEmbed(message, `Você precisa ser ADM ou ter uma das permissões do comando.
-          Permissões necessárias para usar o comando:
-          \`\`${permissao[0] == undefined ? 'ADMINISTRATOR' : command.permission.toString().replace(/,/g,", ")}\`\`.`)),
-          false
-        );
+  for (let i = 0; i < argumentosDeComandoQueUsamPermissao.length; i++) {
+    /*
+    console.log("Args some: ");
+    console.log(args.some(arg => arg == argumentosDeComandoQueUsamPermissao[i]) == true);
+    //*/
+    if (args.some(arg => arg == argumentosDeComandoQueUsamPermissao[i]) == true){
+      i = argumentosDeComandoQueUsamPermissao.length;
+      var checkAllPermission = [];
+  
+      for (let index = 0; index < command.permission.length; index++) {
+        //console.log(`tem ${command.permission[index]}: `+message.member.permissions.has(command.permission[index]));
+  
+        if (message.member.permissions.has(command.permission[index])){
+          
+            checkAllPermission.push(true);
+            if(permissao[0] != undefined) return true;
+        }else checkAllPermission.push(false);
+      }
+      //console.log("checkAllPermission: "+checkAllPermission);
+  
+      if(!checkAllPermission.some(perm => perm == true)) {
+        if (command.category !== 'bot-owner'){
+  
+          return (
+            message.reply(descricaoEmbed(message, `Você precisa ser ADM ou ter uma das permissões do comando.
+            Permissões necessárias para usar o comando:
+            \`\`${permissao[0] == undefined ? 'ADMINISTRATOR' : command.permission.toString().replace(/,/g,", ")}\`\`.`)),
+            false
+          );
+        }
       }
     }
   }
-  if (!args.length || args != command.Perm_Args) return true;
+  if (!args.length || args !== command.Perm_Args) return true;
 
 }
 exports.permArgs = permArgs;
