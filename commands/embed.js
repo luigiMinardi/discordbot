@@ -4,7 +4,9 @@ const Discord = require("discord.js");
 const embed = new Discord.MessageEmbed();
 module.exports = {
   name: 'embed',
-  description: 'Cria uma embed com a sua mensagem',
+  description: `Cria uma embed com a sua mensagem.\nO \`\`${prefix}embed <role>\`\` cria uma embed com a cor de um cargo marcado e a mensagem passada.
+  O \`\`${prefix}embed color\`\` cria uma embed com uma cor Hexadecimal e mensagem passada no comando.
+  O \`\`${prefix}embed marca\`\` cria uma embed que marca uma lista de cargos, tem a cor que você passar e a mensagem. `,
   usage: `<color> <#hexadecimal> <mensagem>\n${prefix}embed <role> <@cargo> <mensagem>\`\`
   \`\`${prefix}embed <marca> <#corHex> <@cargos> <fim> <mensagem>\`\`
 

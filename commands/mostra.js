@@ -5,7 +5,7 @@ const embed = new Discord.MessageEmbed();
 module.exports = {
   name: "mostra",
   description: "Mostra a imagem do seu perfil, do perfil de um servidor, de um usuario ou grupo de usuarios",
-  aliases:['show'],
+  aliases:['show','mostrar'],
   usage: `<guild> \n${prefix}mostra <meu-avatar>\n${prefix}mostra <avatar> <@usuario>\n${prefix}mostra <avatar> <array> <@usuario1> <@usuario2>\`\`\n__Para uma descrição mais detalhada use:__ \n\`\`${prefix}mostra`,
   category: 'utilidade',
   guildOnly: true,
@@ -30,30 +30,38 @@ module.exports = {
           (Para mostrar nossos lindos avatares!)`));
       }
       if (args == "guild") {
-          let mostraAvatar = message.guild.iconURL();
-          return enviaMensagem(message, 
+          let mostraAvatar = message.guild.iconURL().indexOf("a_") != -1 
+            ? `https://cdn.discordapp.com/icons/${message.guild.id}/${message.guild.icon}.gif?size=512` 
+            : `https://cdn.discordapp.com/icons/${message.guild.id}/${message.guild.icon}.jpg?size=512`;
+          return enviaMensagem(message,
             embed
               .setAuthor(
                     `Esse é o avatar da ${message.guild.name}, bela guild!`, 
                     message.guild.iconURL(), 
-                    mostraAvatar+"?size=256")
-              .setDescription(`[Image Link](${mostraAvatar}?size=256)`)
-              .setImage(mostraAvatar+"?size=256")
+                    mostraAvatar)
+              .setDescription(mostraAvatar.indexOf(".gif") != -1
+                ? `**[Gif Link](${mostraAvatar})\n[Image Link](${message.guild.iconURL()}?size=512)**` 
+                : `**[Image Link](${mostraAvatar})**`)
+              .setImage(mostraAvatar)
               .setColor(message.guild.me.displayColor)
               .setFooter(message.author.username, message.author.avatarURL())
           );
       }
       if (args == "meu-avatar") {
-          let mostraAvatar = message.author.displayAvatarURL();
+          let mostraAvatar = message.author.avatarURL().indexOf("a_") != -1 
+            ? `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.gif?size=512` 
+            : `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.jpg?size=512`;
           return enviaMensagem(message,
             embed
               .setAuthor(
                     `${message.author.username}, aqui está seu avatar:`, 
                     message.author.avatarURL(), 
-                    mostraAvatar+"?size=256")
-              .setDescription(`[Image Link](${mostraAvatar}?size=256)`)
+                    mostraAvatar)
+              .setDescription(mostraAvatar.indexOf(".gif") != -1
+                ? `**[Gif Link](${mostraAvatar})\n[Image Link](${message.author.displayAvatarURL()}?size=512)**` 
+                : `**[Image Link](${mostraAvatar})**`)
               .setColor(message.guild.me.displayColor)
-              .setImage(mostraAvatar+"?size=256")
+              .setImage(mostraAvatar)
               .setFooter(message.author.username, message.author.avatarURL())
           );
       }
@@ -73,37 +81,46 @@ module.exports = {
                 (Para mostrar nossos lindos avatares ao mesmo tempo!)`)
               );
           }else if(args[1] == "array"){
-              let mentionedUser = message.mentions.users.array();
-              for (let i = 0; i < mentionedUser.length; i++) {
-                  let enviaAvatar = mentionedUser[i].displayAvatarURL();
-                  enviaMensagem(message, 
-                    embed
-                      .setAuthor(
-                        `Avatar do ${mentionedUser[i].username}:`, 
-                        mentionedUser[i].avatarURL(), 
-                        enviaAvatar+"?size=256")
-                      .setDescription(`[Image Link](${enviaAvatar}?size=256)`)
-                      .setImage(enviaAvatar+"?size=256")
-                      .setColor(message.guild.me.displayColor)
-                      .setFooter(mentionedUser[i].username, mentionedUser[i].avatarURL())
-                  );  
-                  //console.log("Envia avatar = " + enviaAvatar);         
-              }
-              /*
-              console.log("Mostra avatares = "+ mentionedUser);
-              console.log("Users size = " + message.mentions.users.size);
-              console.log("Avatares length = " +mentionedUser.length);//*/
+            console.log("entrou")
+              message.mentions.users.forEach(user=> {
+                console.log(user.avatarURL().indexOf("a_") != -1)
+                console.log("display:")
+                console.log(user.displayAvatarURL())
+                console.log("default:")
+                console.log(user.defaultAvatarURL)
+                let enviaAvatar = user.avatarURL().indexOf("a_") != -1 
+                  ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.gif?size=512`
+                  : `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.jpg?size=512`;
+                enviaMensagem(message, 
+                  embed
+                    .setTitle('')
+                    .setAuthor(
+                      `Avatar do ${user.username}:`, 
+                      user.avatarURL(),
+                      enviaAvatar)
+                      .setDescription(enviaAvatar.indexOf(".gif") != -1
+                        ? `**[Gif Link](${enviaAvatar})\n[Image Link](${user.displayAvatarURL()}?size=512)**` 
+                        : `**[Image Link](${enviaAvatar})**`)
+                    .setImage(enviaAvatar)
+                    .setColor(message.guild.me.displayColor)
+                    .setFooter(user.username, user.avatarURL())
+                );  
+              });
           } else {
-              let mostraAvatar = message.mentions.users.first().displayAvatarURL();
+              let mostraAvatar = message.mentions.users.first().avatarURL().indexOf("a_") != -1 
+                ? `https://cdn.discordapp.com/avatars/${message.mentions.users.first().id}/${message.mentions.users.first().avatar}.gif?size=512` 
+                : `https://cdn.discordapp.com/avatars/${message.mentions.users.first().id}/${message.mentions.users.first().avatar}.jpg?size=512`;
               enviaMensagem(message, 
                 embed
                   .setAuthor(
                     `Avatar do ${message.mentions.users.first().username}:`, 
                     message.mentions.users.first().avatarURL(), 
-                    mostraAvatar+"?size=256")
+                    mostraAvatar)
                   .setTitle('')
-                  .setDescription(`[Image Link](${mostraAvatar}?size=256)`)
-                  .setImage(mostraAvatar+"?size=256")
+                  .setDescription(mostraAvatar.indexOf(".gif") != -1
+                    ? `**[Gif Link](${mostraAvatar})\n[Image Link](${message.mentions.users.first().displayAvatarURL()}?size=512)**` 
+                    : `**[Image Link](${mostraAvatar})**`)
+                  .setImage(mostraAvatar)
                   .setColor(message.guild.me.displayColor)
                   .setFooter(message.author.username, message.author.avatarURL()));
           }
